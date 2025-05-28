@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>動画販売 価格表</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: sans-serif; padding:20px; }
+  #topBtn { position: fixed; bottom:20px; right:20px; padding:10px; background:#007bff; color:white; border:none; border-radius:5px; }
+  table { width:100%; border-collapse: collapse; margin-top:10px; }
+  th, td { border:1px solid #ccc; padding:8px; text-align:center; }
+  th { background:#f0f0f0; }
+  #searchBox { width:100%; padding:8px; font-size:16px; margin-bottom:10px; }
+  #summary { margin-top:10px; font-weight:bold; }
+</style>
+</head>
+<body>
+<h1>動画販売 価格表</h1>
+<input type="text" id="searchBox" placeholder="検索: 番号を入力（範囲指定例 1~5, 区切り , or 、, 全角/半角対応, ALLで全件）">
+<div id="summary">選択件数: 全件（142件） 合計: ---円 (PayPay), ---円 (他)</div>
+<table id="priceTable">
+  <thead>
+    <tr><th>番号</th><th>本数</th><th>価格(円)</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<button id="topBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲TOP</button>
+<script>
+// データ配列
+const data = [
+  {num:1,cnt:4,price:500},
+  {num:2,cnt:2,price:500},
+  {num:3,cnt:5,price:1000},
+  {num:4,cnt:2,price:1000},
+  {num:5,cnt:57,price:1500},
+  {num:6,cnt:15,price:1500},
+  {num:7,cnt:2,price:2000},
+  {num:8,cnt:62,price:2000},
+  {num:9,cnt:1,price:3500},
+  {num:10,cnt:1,price:3500},
+  {num:11,cnt:1,price:3500},
+  {num:12,cnt:2,price:3500},
+  {num:13,cnt:10,price:3500},
+  {num:14,cnt:3,price:3500},
+  {num:15,cnt:16,price:3500},
+  {num:16,cnt:2,price:3500},
+  {num:17,cnt:7,price:3500},
+  {num:18,cnt:4,price:3500},
+  {num:19,cnt:36,price:3500},
+  {num:20,cnt:3,price:3500},
+  {num:21,cnt:40,price:3500},
+  {num:22,cnt:8,price:3500},
+  {num:23,cnt:14,price:3500},
+  {num:24,cnt:2,price:3500},
+  {num:25,cnt:8,price:3500},
+  {num:26,cnt:10,price:3500},
+  {num:27,cnt:6,price:3500},
+  {num:28,cnt:3,price:3500},
+  {num:29,cnt:4,price:3500},
+  {num:30,cnt:62,price:3500},
+  {num:31,cnt:1,price:3500},
+  {num:32,cnt:2,price:3500},
+  {num:33,cnt:44,price:3500},
+  {num:34,cnt:15,price:3500},
+  {num:35,cnt:22,price:3500},
+  {num:36,cnt:8,price:3500},
+  {num:37,cnt:3,price:3500},
+  {num:38,cnt:5,price:3500},
+  {num:39,cnt:30,price:3500},
+  {num:40,cnt:5,price:3500},
+  {num:41,cnt:34,price:3500},
+  {num:42,cnt:7,price:3500},
+  {num:43,cnt:14,price:3500},
+  {num:44,cnt:2,price:3500},
+  {num:45,cnt:12,price:3500},
+  {num:46,cnt:4,price:3500},
+  {num:47,cnt:15,price:3500},
+  {num:48,cnt:24,price:3500},
+  {num:49,cnt:3,price:3500},
+  {num:50,cnt:5,price:3500},
+  {num:51,cnt:5,price:3500},
+  {num:52,cnt:10,price:3500},
+  {num:53,cnt:2,price:3500},
+  {num:54,cnt:6,price:3500},
+  {num:55,cnt:5,price:3500},
+  {num:56,cnt:5,price:3500},
+  {num:57,cnt:5,price:3500},
+  {num:58,cnt:7,price:3500},
+  {num:59,cnt:5,price:3500},
+  {num:60,cnt:3,price:3500},
+  {num:61,cnt:9,price:3500},
+  {num:62,cnt:10,price:3500},
+  {num:63,cnt:2,price:3500},
+  {num:64,cnt:5,price:3500},
+  {num:65,cnt:3,price:3500},
+  {num:66,cnt:2,price:3500},
+  {num:67,cnt:4,price:3500},
+  {num:68,cnt:26,price:3500},
+  {num:69,cnt:6,price:3500},
+  {num:70,cnt:9,price:3500},
+  {num:71,cnt:9,price:3500},
+  {num:72,cnt:6,price:3500},
+  {num:73,cnt:9,price:3500},
+  {num:74,cnt:6,price:3500},
+  {num:75,cnt:6,price:3500},
+  {num:76,cnt:37,price:3500},
+  {num:77,cnt:5,price:3500},
+  {num:78,cnt:15,price:3500},
+  {num:79,cnt:3,price:3500},
+  {num:80,cnt:3,price:3500},
+  {num:81,cnt:3,price:3500},
+  {num:82,cnt:4,price:3500},
+  {num:83,cnt:4,price:3500},
+  {num:84,cnt:4,price:3500},
+  {num:85,cnt:11,price:3500},
+  {num:86,cnt:15,price:3500},
+  {num:87,cnt:4,price:3500},
+  {num:88,cnt:18,price:3500},
+  {num:89,cnt:16,price:3500},
+  {num:90,cnt:4,price:3500},
+  {num:91,cnt:4,price:3500},
+  {num:92,cnt:1,price:3500},
+  {num:93,cnt:85,price:3500},
+  {num:94,cnt:5,price:3500},
+  {num:95,cnt:5,price:3500},
+  {num:96,cnt:4,price:3500},
+  {num:97,cnt:16,price:3500},
+  {num:98,cnt:22,price:3500},
+  {num:99,cnt:7,price:3500},
+  {num:100,cnt:10,price:3500},
+  {num:101,cnt:55,price:3500},
+  {num:102,cnt:8,price:3500},
+  {num:103,cnt:5,price:3500},
+  {num:104,cnt:5,price:3500},
+  {num:105,cnt:67,price:3500},
+  {num:106,cnt:3,price:3500},
+  {num:107,cnt:15,price:3500},
+  {num:108,cnt:2,price:3500},
+  {num:109,cnt:2,price:3500},
+  {num:110,cnt:1,price:3500},
+  {num:111,cnt:3,price:3500},
+  {num:112,cnt:10,price:3500},
+  {num:113,cnt:2,price:3500},
+  {num:114,cnt:2,price:3500},
+  {num:115,cnt:4,price:3500},
+  {num:116,cnt:39,price:3500},
+  {num:117,cnt:20,price:3500},
+  {num:118,cnt:5,price:3500},
+  {num:119,cnt:2,price:3500},
+  {num:120,cnt:7,price:3500},
+  {num:121,cnt:38,price:3500},
+  {num:122,cnt:10,price:3500},
+  {num:123,cnt:1,price:3500},
+  {num:124,cnt:4,price:3500},
+  {num:125,cnt:43,price:3500},
+  {num:126,cnt:4,price:3500},
+  {num:127,cnt:41,price:3500},
+  {num:128,cnt:2,price:3500},
+  {num:129,cnt:6,price:3500},
+  {num:130,cnt:6,price:3500},
+  {num:131,cnt:5,price:3500},
+  {num:132,cnt:6,price:3500},
+  {num:133,cnt:6,price:3500},
+  {num:134,cnt:5,price:3500},
+  {num:135,cnt:2,price:3500},
+  {num:136,cnt:3,price:3500},
+  {num:137,cnt:8,price:3500},
+  {num:138,cnt:5,price:3500},
+  {num:139,cnt:10,price:3500},
+  {num:140,cnt:2,price:3500},
+  {num:141,cnt:2,price:3500},
+  {num:142,cnt:8,price:3500}
+];
+
+// テーブル生成
+const tbody = document.querySelector('#priceTable tbody');
+data.forEach(item => {
+  const tr = document.createElement('tr');
+  tr.dataset.num = item.num;
+  tr.innerHTML = `<td>${item.num}</td><td>${item.cnt}本</td><td>${item.price}</td>`;
+  tbody.appendChild(tr);
+});
+
+// 入力正規化: 全角数字、範囲記号、全角カンマなど
+function normalizeInput(str) {
+  return str.replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0)-65248))
+            .replace(/[、，]/g, ',')
+            .replace(/～/g, '~');
+}
+
+// 範囲展開
+function expandTerms(terms) {
+  let nums = new Set();
+  terms.forEach(term => {
+    const t = term.trim().toUpperCase();
+    if (t === 'ALL') {
+      data.forEach(d => nums.add(d.num));
+    } else if (t.includes('~')) {
+      const [a,b] = t.split('~').map(n => parseInt(n, 10));
+      if (!isNaN(a) && !isNaN(b)) {
+        const start = Math.min(a,b), end = Math.max(a,b);
+        for (let i=start; i<=end; i++) nums.add(i);
+      }
+    } else {
+      const n = parseInt(t,10);
+      if (!isNaN(n)) nums.add(n);
+    }
+  });
+  return Array.from(nums);
+}
+
+// 割引率取得
+function getDiscount(count) {
+  if (count>=20) return 0.25;
+  if (count>=15) return 0.20;
+  if (count>=10) return 0.15;
+  if (count>=5) return 0.10;
+  if (count>=2) return 0.05;
+  return 0;
+}
+
+document.getElementById('searchBox').addEventListener('input', e => {
+  const input = normalizeInput(e.target.value);
+  const terms = input.split(',');
+  const nums = expandTerms(terms);
+  let total=0, sum=0;
+  data.forEach(item => {
+    const row = document.querySelector(`#priceTable tbody tr[data-num="${item.num}"]`);
+    if (nums.length===0) {
+      row.style.display = '';
+      total++; sum += item.price;
+    } else if (nums.includes(item.num)) {
+      row.style.display = '';
+      total++; sum += item.price;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+  const summary = document.getElementById('summary');
+  if (nums.length===0) {
+    summary.textContent = `選択件数: 全件（${data.length}件） 合計: ---円 (PayPay), ---円 (他)`;
+  } else {
+    const disc = getDiscount(total);
+    const discSum = Math.round(sum*(1-disc));
+    summary.textContent = `選択件数: ${total} 合計: ${discSum}円 (PayPay), ${discSum+600}円 (他)`;
+  }
+});
+</script>
+</body>
+</html>
